@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شبكة الوادعي الاحترافية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --neon: #00f2ff; --purple: #7000ff; --error: #ff4b2b; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background: #050505; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
+
+        .app-container {
+            width: 90%; max-width: 400px; background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px); border-radius: 30px; padding: 40px 30px;
+            border: 1px solid rgba(255,255,255,0.1); text-align: center; position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+
+        .logo { font-size: 2.5rem; font-weight: 900; color: var(--neon); text-shadow: 0 0 20px var(--neon); margin-bottom: 30px; }
+
+        /* الأقسام */
+        .section { display: none; animation: slideIn 0.4s ease-out forwards; }
+        .active { display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* المدخلات والرسائل */
+        .input-group { position: relative; margin-bottom: 5px; }
+        input { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #222; background: rgba(0,0,0,0.5); color: #fff; text-align: center; font-size: 1.2rem; outline: none; transition: 0.3s; }
+        input.invalid { border-color: var(--error); box-shadow: 0 0 10px var(--error); }
+        .error-msg { color: var(--error); font-size: 0.8rem; margin-bottom: 15px; display: none; font-weight: bold; }
+
+        /* الأزرار */
+        .btn { width: 100%; padding: 16px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 12px; display: block; text-decoration: none; font-size: 1rem; }
+        .btn-main { background: linear-gradient(45deg, var(--purple), var(--neon)); color: white; box-shadow: 0 5px 15px rgba(0, 242, 255, 0.3); }
+        .btn-outline { background: transparent; border: 1px solid var(--neon); color: var(--neon); }
+        .btn-whatsapp { background: #25D366; color: white; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3); }
+        .btn:hover { transform: scale(1.03); filter: brightness(1.1); }
+
+        /* جداول البيانات */
+        .data-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; margin-top: 10px; text-align: right; }
+        .row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .val { color: var(--neon); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="logo">الوادعي</div>
+
+        <div id="login-page" class="section active">
+            <div class="input-group">
+                <input type="text" id="card-code" placeholder="أدخل كود الكرت هنا">
+            </div>
+            <div id="error-text" class="error-msg">⚠️ عذراً، يجب إدخال كود الكرت أولاً!</div>
+            
+            <button class="btn btn-main" onclick="handleLogin()">دخول سريع</button>
+            <button class="btn btn-outline" onclick="showPage('price-page')">💰 أسعار الباقات</button>
+            <a href="https://wa.me/967733985603" class="btn btn-whatsapp">💬 خدمة العملاء (واتساب)</a>
+        </div>
+
+        <div id="status-page" class="section">
+            <h3 style="color: var(--neon); margin-bottom: 20px;">حالة الاتصال</h3>
+            <div class="data-card">
+                <div class="row"><span>الرصيد المتبقي:</span> <span class="val">05:22:40</span></div>
+                <div class="row"><span>استهلاك البيانات:</span> <span class="val">1.2 GB</span></div>
+                <div class="row"><span>سرعة الخط:</span> <span class="val">8 Mbps</span></div>
+            </div>
+            <button class="btn btn-main" style="margin-top: 20px;" onclick="showPage('login-page')">تسجيل الخروج</button>
+        </div>
+
+        <div id="price-page" class="section">
+            <h3 style="color: var(--neon); margin-bottom: 20px;">أسعار الكروت</h3>
+            <div class="data-card">
+                <div class="row"><span>ساعة واحدة</span> <span class="val">100 ر.ي</span></div>
+                <div class="row"><span>3 ساعات</span> <span class="val">250 ر.ي</span></div>
+                <div class="row"><span>يوم كامل</span> <span class="val">500 ر.ي</span></div>
+                <div class="row"><span>أسبوع</span> <span class="val">2500 ر.ي</span></div>
+            </div>
+            <button class="btn btn-outline" style="margin-top: 20px;" onclick="showPage('login-page')">العودة للرئيسية</button>
+        </div>
+
+    </div>
+
+    <script>
+        // وظيفة التنقل بين الصفحات
+        function showPage(pageId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // وظيفة الدخول مع التحقق
+        function handleLogin() {
+            const input = document.getElementById('card-code');
+            const errorText = document.getElementById('error-text');
+
+            if (input.value.trim() === "") {
+                // إذا كان الحقل فارغاً
+                input.classList.add('invalid');
+                errorText.style.display = 'block';
+                // هز الكرت للتنبيه
+                input.parentElement.style.animation = "shake 0.2s ease-in-out 0s 2";
+            } else {
+                // إذا تمت التعبئة، انتقل لصفحة الرصيد
+                input.classList.remove('invalid');
+                errorText.style.display = 'none';
+                showPage('status-page');
+            }
+        }
+
+        // إضافة تأثير الاهتزاز عند الخطأ
+        document.head.insertAdjacentHTML('beforeend', '<style>@keyframes shake { 25% {transform:translateX(5px);} 75% {transform:translateX(-5px);} }</style>');
+    </script>
+
+</body>
+</html>
